@@ -1,8 +1,5 @@
 service:
   name: dsig-airtable-service
-# app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
 
 custom:
   webpack:
@@ -20,11 +17,13 @@ provider:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    AIRTABLE_BASE_ID: ${ssm:/DSIG_AIRTABLE_BASE_ID~true}
+    AIRTABLE_API_KEY: ${ssm:/DSIG_AIRTABLE_API_KEY~true}
 
 functions:
-  hello:
-    handler: handler.hello
+  processRideReports:
+    handler: src/handlers/ride-reports.handle
     events:
-      - http:
-          method: get
-          path: hello
+      - schedule: 
+        rate: rate(5 minutes)
+        enabled: true
