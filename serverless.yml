@@ -24,6 +24,6 @@ functions:
   processRideReports:
     handler: src/handlers/ride-reports.handle
     events:
-      - schedule: 
-        rate: rate(5 minutes)
-        enabled: true
+      - schedule:
+          rate: rate(1 minute)
+          enabled: true
