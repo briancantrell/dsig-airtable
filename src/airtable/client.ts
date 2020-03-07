@@ -1,5 +1,7 @@
 import * as Airtable from 'airtable'
 
+const NO_PHOTO = "https://i.pinimg.com/originals/41/c6/2c/41c62c9bf5899dd4f003c801296d3c07.jpg"
+
 const getBase = () => {
   return new Airtable().base(process.env.AIRTABLE_BASE_ID)
 }
@@ -18,6 +20,23 @@ export const createRideReport = async (rideReportData: rideReportData) => {
     rideReportData
   ])
   return rideReports
+}
+
+export const getRideReport = async (id: string) => {
+  console.log("getRideReport", id)
+  const base = getBase()
+  console.log("got base", base)
+  const report = await base('Ride Reports').find(id)
+  console.log("getRideReport", report)
+  return report
+}
+
+export const getParticipantReports = async (ids: string[]) => {
+  const base = getBase()
+  const formula = `OR( ${ids.map(id => (`{Record Id} = '${id}'`)).join(",")} )`
+  return await base("Participant Reports").select({
+   filterByFormula: formula 
+  }).all()
 }
 
 export const unprocessedRideReportData = async () => {
@@ -58,17 +77,63 @@ export const createParticipantReport = async (participantReportData: Array<parti
   return participantReports
 }
 
-export const getParticipantIdByName = async () => {
+export interface PeopleByName{
+  [key: string]: {
+    id: string;
+    name: string;
+    photo: AirtableImage | undefined;
+  }
+};
+
+export interface AirtableImage {
+  filename: string;
+  id: string;
+  size: number;
+  thumbnails: {
+    full: { height: number; url: string; width: number },
+    large: { height: number; url: string; width: number },
+    small: { height: number; url: string; width: number },
+  };
+  type: string;
+  url: string;
+}
+
+export const peopleByName = (people) => {
+  let peopleByName = {}
+  people.forEach(record => {
+    peopleByName[record.fields["Name"]] = {
+      id: record.id,
+      name: record.fields["Name"],
+      photo: (record.fields["Photo"] || [{thumbnails: {large: {url: NO_PHOTO}}}])[0] //must be better way to do this!
+    }
+  });
+  return peopleByName
+}
+
+export const peopleById = (people) => {
+  let peopleById = {}
+  people.forEach(record => {
+    peopleById[record.id] = {
+      id: record.id,
+      name: record.fields["Name"],
+      photo: (record.fields["Photo"] || [{thumbnails: {large: {url: NO_PHOTO}}}])[0]
+    }
+  });
+  return peopleById
+}
+
+export const getPeople = async (peopleType) => {
   const base = getBase()
-  let participantIds = {}
-  await base('Participants').select({
+  let people = []
+  
+  await base(peopleType).select({
     view: 'Grid view'
   }).eachPage(function page(records, fetchNextPage) {
     records.forEach(function(record) {
-      participantIds[record.fields["Name"]] = record.id
-    });
-    fetchNextPage();
-  })
+      people.push(record)
+      fetchNextPage() 
+    }
+  )})
 
-  return participantIds
+  return people
 }

@@ -15,15 +15,36 @@ provider:
   runtime: nodejs12.x
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'SNS:Publish'
+      Resource:
+        - !Ref RideReportTopic
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
     AIRTABLE_BASE_ID: ${ssm:/DSIG_AIRTABLE_BASE_ID~true}
     AIRTABLE_API_KEY: ${ssm:/DSIG_AIRTABLE_API_KEY~true}
+    RIDE_REPORT_SNS_TOPIC: !Ref RideReportTopic 
+    SLACK_WEBHOOK_URL: ${ssm:/DSIG_SLACK_WEBHOOK_URL~true}
 
 functions:
   processRideReports:
     handler: src/handlers/ride-reports.handle
     events:
       - schedule:
-          rate: rate(1 minute)
+          rate: rate(3 minutes)
           enabled: true
+  postRideReportToSlack:
+    handler: src/handlers/ride-report-slack.handle
+    events:
+      - sns: 
+          arn: !Ref RideReportTopic 
+          topicName: ride-reports-topic
+
+resources:
+  Resources:
+    RideReportTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ride-reports-topic
