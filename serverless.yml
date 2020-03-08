@@ -13,6 +13,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
   apiGateway:
     minimumCompressionSize: 1024 # Enable gzip compression for responses > 1 KB
   iamRoleStatements:
@@ -23,10 +24,10 @@ provider:
         - !Ref RideReportTopic
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
-    AIRTABLE_BASE_ID: ${ssm:/DSIG_AIRTABLE_BASE_ID~true}
+    AIRTABLE_BASE_ID: ${ssm:/DSIG_AIRTABLE_BASE_ID_${self:provider.stage}~true}
     AIRTABLE_API_KEY: ${ssm:/DSIG_AIRTABLE_API_KEY~true}
     RIDE_REPORT_SNS_TOPIC: !Ref RideReportTopic 
-    SLACK_WEBHOOK_URL: ${ssm:/DSIG_SLACK_WEBHOOK_URL~true}
+    SLACK_WEBHOOK_URL: ${ssm:/DSIG_SLACK_WEBHOOK_URL_${self:provider.stage}~true}
 
 functions:
   processRideReports:
