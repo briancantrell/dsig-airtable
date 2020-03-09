@@ -41,11 +41,11 @@ functions:
     events:
       - sns: 
           arn: !Ref RideReportTopic 
-          topicName: ride-reports-topic
+          topicName: ride-reports-topic-${self:provider.stage}
 
 resources:
   Resources:
     RideReportTopic:
       Type: AWS::SNS::Topic
       Properties:
-        TopicName: ride-reports-topic
+        TopicName: ride-reports-topic-${self:provider.stage}
