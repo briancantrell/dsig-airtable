@@ -9,7 +9,7 @@
   "dependencies": {
     "@slack/webhook": "^5.0.2",
     "airtable": "^0.8.1",
-    "aws-sdk": "^2.624.0",
+    "aws-sdk": "^2.814.0",
     "source-map-support": "^0.5.10"
   },
   "devDependencies": {
