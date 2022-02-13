@@ -23,11 +23,8 @@ export const createRideReport = async (rideReportData: rideReportData) => {
 }
 
 export const getRideReport = async (id: string) => {
-  console.log("getRideReport", id)
   const base = getBase()
-  console.log("got base", base)
   const report = await base('Ride Reports').find(id)
-  console.log("getRideReport", report)
   return report
 }
 
