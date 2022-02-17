@@ -16,9 +16,11 @@ describe("peopleByName", () => {
   })
 })
 
+const participantRideReportId = "recMACISZNhj0fdsR"
+
 describe("getParticipantsReports", () => {
   it("filters by the passed in ids", async () => {
-    const reports = await getParticipantReports(["rec3R7O7ONqmd2mSe"])
+    const reports = await getParticipantReports([participantRideReportId])
     expect(reports.length).toBe(1)
   })
 })
