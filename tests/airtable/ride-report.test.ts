@@ -4,7 +4,6 @@ describe("getRideReportById", () => {
   test("it returns data of the right shape", async () => {
     const testReportId = "recOiHxTTxFh8IHzl"
     const rideReport = await getRideReportById(testReportId)
-    console.log(rideReport)
 
     expect(rideReport.Ride).toBe("West Hudson Dirt")
     expect(rideReport.Leader.name).toBe("Brian Cantrell")

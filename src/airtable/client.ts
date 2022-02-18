@@ -14,18 +14,18 @@ interface rideReportData {
   }
 }
 
+export const getRideReport = async (id: string) => {
+  const base = getBase()
+  const report = await base('Ride Reports').find(id)
+  return report
+}
+
 export const createRideReport = async (rideReportData: rideReportData) => {
   const base = getBase()
   const rideReports = await base('Ride Reports').create([
     rideReportData
   ])
   return rideReports
-}
-
-export const getRideReport = async (id: string) => {
-  const base = getBase()
-  const report = await base('Ride Reports').find(id)
-  return report
 }
 
 export const getParticipantReports = async (ids: string[]) => {
@@ -36,7 +36,7 @@ export const getParticipantReports = async (ids: string[]) => {
   }).all()
 }
 
-export const unprocessedRideReportData = async () => {
+export const getUnprocessedRideReportData = async () => {
   const base = getBase()
   let unprocessedReports = []
   await base('Ride Report Data').select({
@@ -95,7 +95,7 @@ export interface AirtableImage {
   url: string;
 }
 
-export const peopleByName = (people) => {
+export const getPeopleByName = (people) => {
   let peopleByName = {}
   people.forEach(record => {
     peopleByName[record.fields["Name"]] = {
@@ -107,7 +107,7 @@ export const peopleByName = (people) => {
   return peopleByName
 }
 
-export const peopleById = (people) => {
+export const getPeopleById = (people) => {
   let peopleById = {}
   people.forEach(record => {
     peopleById[record.id] = {

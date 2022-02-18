@@ -1,7 +1,7 @@
 import { sendRideReportToSlack } from "../../src/slack/client"
 
 describe("sendRideReportToSlack", () => {
-  it("send the message to slack", async () => {
+  it("receives 'ok' from the slack api", async () => {
     const rideReport = {
       Leader: { 
         name: "Brian Cantrell",
@@ -18,6 +18,6 @@ describe("sendRideReportToSlack", () => {
     }
 
     const response = await sendRideReportToSlack(rideReport)
-    console.log(response)
+    expect(response.text).toBe("ok")
   })
 })

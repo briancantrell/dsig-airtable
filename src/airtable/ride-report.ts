@@ -1,18 +1,16 @@
 import { 
-  unprocessedRideReportData, 
+  getUnprocessedRideReportData, 
   createRideReport, 
   createParticipantReport, 
   markRideReportDataProcessed, 
   getRideReport,
   getPeople,
-  peopleById,
-  peopleByName,
+  getPeopleById,
+  getPeopleByName,
   getParticipantReports
 } from "./client"
 
 import { publishRideReportCreated } from "../sns/client"
-// import { sendRideReportToSlack } from "../slack/client"
-
 
 // interface ParticipantRideReport {
 //   Participant: {
@@ -74,9 +72,9 @@ const buildMarkRideReportDataProcessedFields = (processedReportDataIds) => {
 export const processReports = async () => {
   const processedReportDataIds = []
   const newRideReportIds = []
-  const unprocessedReportData = await unprocessedRideReportData() 
+  const unprocessedReportData = await getUnprocessedRideReportData() 
   const participants = await getPeople("Participants")
-  const participantByName = peopleByName(participants)
+  const participantByName = getPeopleByName(participants)
 
   await Promise.all(
     unprocessedReportData.map(async (reportData) => {
@@ -105,7 +103,7 @@ export const processReports = async () => {
 
 const formatParticipantReports = async (participantReports) => {
   const participants = await getPeople("Participants")
-  const participantsById = peopleById(participants)
+  const participantsById = getPeopleById(participants)
   return participantReports.map(report => ({
       Report: report.fields["Report"],
       Participant: participantsById[report.fields["Participant"][0]]
@@ -116,7 +114,7 @@ const formatParticipantReports = async (participantReports) => {
 export const getRideReportById = async (id: string)  => {
   const rideReport = await getRideReport(id)
   const leaders = await getPeople("Leaders")
-  const rideLeader = peopleById(leaders)[rideReport.fields["Leader"][0]]
+  const rideLeader = getPeopleById(leaders)[rideReport.fields["Leader"][0]]
   const participantReports = await getParticipantReports(rideReport.fields["Participant Reports"])
   const formattedReports = await formatParticipantReports(participantReports)
 

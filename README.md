@@ -14,13 +14,22 @@ Leaders submit ride reports to the denormalized Ride Report Data table. This app
 
 Run the tests with 
 `yarn test`
-currently there is not a test environment so the tests will submit data to live endpoints.
+tests will write to the Airtable base specified in AIRTABLE_BASE_ID, currently using the same test base for development and testing.
 
+## Deploying
+
+There are two serverless framework "stages". dev and production.
+`serverless deploy -s production`
+
+## Logs
+
+To view logs for a stage, 
+`serverless logs -t -s dev -f processRideReports`
 
 ## TODO
 1. ~All tests pass~
     - ~Reconfigure test data in test base~
-2. Confirm ride report copies participants' report, not their name as the report description
+2. ~Confirm ride report copies participants' report, not their name as the report description~
 3. Refactor larger files, order methods by call stack
 4. Add missing types
 5. Email - is it worth it?

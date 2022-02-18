@@ -1,10 +1,10 @@
-import { getPeople, peopleByName, PeopleByName, getParticipantReports } from "../../src/airtable/client"
+import { getPeople, getPeopleByName, PeopleByName, getParticipantReports } from "../../src/airtable/client"
 
 
 describe("peopleByName", () => {
   test("it returns data of the right shape", async () => {
     const participants = await getPeople("Participants")
-    const participantsByName = peopleByName(participants)
+    const participantsByName = getPeopleByName(participants)
 
     expect(participantsByName).toMatchObject<PeopleByName>(
       {'Test User': {
