@@ -17,11 +17,9 @@ interface Block {
 }
 
 export const sendRideReportToSlack = async (rideReport) => {
-  console.log("in slack client", rideReport)
   const webhook = new slack.IncomingWebhook(WEBHOOK_URL);
 
-  let messageblock: {blocks: Block[]} = {
-    blocks: [
+  let messageblock: Block[] = [
       {
         "type": "section",
         "text": {
@@ -48,12 +46,11 @@ export const sendRideReportToSlack = async (rideReport) => {
           "alt_text": rideReport.Leader.name       
         }
       },
-    ]
-  }
+  ]
 
   rideReport.Reports.forEach(report => {
-    messageblock.blocks.push({ "type": "divider" })
-    messageblock.blocks.push({
+    messageblock.push({ "type": "divider" })
+    messageblock.push({
       type: "section",
       text: {
         type: "mrkdwn",
@@ -66,7 +63,7 @@ export const sendRideReportToSlack = async (rideReport) => {
       }
     })
   });
-  messageblock.blocks.push( {
+  messageblock.push( {
     "type": "context",
     "elements": [
       {
@@ -76,5 +73,9 @@ export const sendRideReportToSlack = async (rideReport) => {
     ]
   })
 
-  return await webhook.send(messageblock)
+  return await webhook.send( {
+      text: `${rideReport.Leader.name} submitted a ride report`,
+      blocks: messageblock
+    }
+  )
 }
