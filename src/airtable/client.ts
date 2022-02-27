@@ -16,16 +16,14 @@ interface rideReportData {
 
 export const getRideReport = async (id: string) => {
   const base = getBase()
-  const report = await base('Ride Reports').find(id)
-  return report
+  return await base('Ride Reports').find(id)
 }
 
 export const createRideReport = async (rideReportData: rideReportData) => {
   const base = getBase()
-  const rideReports = await base('Ride Reports').create([
+  return await base('Ride Reports').create([
     rideReportData
   ])
-  return rideReports
 }
 
 export const getParticipantReports = async (ids: string[]) => {
@@ -54,9 +52,9 @@ interface processedRideReportRequest {
     "Processed at": string;
   }
 }
-export const markRideReportDataProcessed = (fields: Array<processedRideReportRequest>) => {
+export const markRideReportDataProcessed = async (fields: Array<processedRideReportRequest>) => {
   const base = getBase()
-  base('Ride Report Data').update(fields) 
+  return base('Ride Report Data').update(fields) 
 }
 
 interface participantReportData {
@@ -68,10 +66,9 @@ interface participantReportData {
   }
 }
 
-export const createParticipantReport = async (participantReportData: Array<participantReportData>) => {
+export const createParticipantReport = (participantReportData: Array<participantReportData>) => {
   const base = getBase()
-  const participantReports = await base('Participant Reports').create(participantReportData)
-  return participantReports
+  return base('Participant Reports').create(participantReportData)
 }
 
 export interface PeopleByName{

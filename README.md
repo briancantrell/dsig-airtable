@@ -16,6 +16,11 @@ Run the tests with
 `yarn test`
 tests will write to the Airtable base specified in AIRTABLE_BASE_ID, currently using the same test base for development and testing.
 
+## Development
+
+To run a function locally use 
+`serverless invoke local -f processRideReports`
+
 ## Deploying
 
 There are two serverless framework "stages". dev and production.

@@ -27,6 +27,40 @@ import { publishRideReportCreated } from "../sns/client"
 //   ParticipantReports: ParticipantRideReport[];
 // }
 
+export const processReports = async () => {
+  const processedReportDataIds = []
+  const newRideReportIds = []
+  let unprocessedReportData = await getUnprocessedRideReportData() 
+
+  const participants = await getPeople("Participants")
+  const participantByName = getPeopleByName(participants)
+
+  await Promise.all(
+    unprocessedReportData
+      .map(async (reportData) => {
+        const rideReportFields = buildRideReportFields(reportData)
+        const rideReport = await createRideReport(rideReportFields)
+        newRideReportIds.push(rideReport[0].id)
+        processedReportDataIds.push(reportData.id)
+        const participantReportFields = buildParticipantReportFields(
+          reportData, 
+          rideReport[0].id, 
+          participantByName
+        )
+        return createParticipantReport(participantReportFields)
+      })
+  )
+
+  if(processedReportDataIds.length > 0) {
+    const markFields = buildMarkRideReportDataProcessedFields(processedReportDataIds)
+    await markRideReportDataProcessed(markFields)
+  }
+
+  newRideReportIds.forEach(id => {
+    publishRideReportCreated(id)
+  })
+}
+
 const buildRideReportFields = (reportData) => {
   return {
     fields: {
@@ -53,7 +87,7 @@ const buildParticipantReportFields = (reportData, reportId, participantByName) =
 
 const participantFields = (data) => {
   return Object.entries(data).filter((kv) => {
-    return !["Created at", "Leader", "Summary", "Ride", "Name"].includes(kv[0])
+    return !["Created at", "Leader", "Summary", "Ride", "Name", "Record ID"].includes(kv[0])
   })
 }
 
@@ -66,38 +100,6 @@ const buildMarkRideReportDataProcessedFields = (processedReportDataIds) => {
         "Processed at": now.toISOString()
       }
     }
-  })
-}
-
-export const processReports = async () => {
-  const processedReportDataIds = []
-  const newRideReportIds = []
-  const unprocessedReportData = await getUnprocessedRideReportData() 
-  const participants = await getPeople("Participants")
-  const participantByName = getPeopleByName(participants)
-
-  await Promise.all(
-    unprocessedReportData.map(async (reportData) => {
-      const rideReportFields = buildRideReportFields(reportData)
-      const rideReport = await createRideReport(rideReportFields)
-      newRideReportIds.push(rideReport[0].id)
-      processedReportDataIds.push(reportData.id)
-      const participantReportFields = buildParticipantReportFields(
-        reportData, 
-        rideReport[0].id, 
-        participantByName
-        )
-      return await createParticipantReport(participantReportFields)
-    })
-  )
-
-  if(processedReportDataIds.length > 0) {
-    const markFields = buildMarkRideReportDataProcessedFields(processedReportDataIds)
-    markRideReportDataProcessed(markFields)
-  }
-
-  newRideReportIds.forEach(id => {
-    publishRideReportCreated(id)
   })
 }
 

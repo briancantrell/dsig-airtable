@@ -63,6 +63,7 @@ export const sendRideReportToSlack = async (rideReport) => {
       }
     })
   });
+
   messageblock.push( {
     "type": "context",
     "elements": [
@@ -73,7 +74,7 @@ export const sendRideReportToSlack = async (rideReport) => {
     ]
   })
 
-  return await webhook.send( {
+  return webhook.send( {
       text: `${rideReport.Leader.name} submitted a ride report`,
       blocks: messageblock
     }
