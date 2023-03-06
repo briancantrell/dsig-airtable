@@ -71,6 +71,13 @@ export const createParticipantReport = (participantReportData: Array<participant
   return base('Participant Reports').create(participantReportData)
 }
 
+export const getRosterByRideName= async (rideName: string) => {
+  const base = getBase()
+  return await base('Rosters').select({
+    view: rideName
+  })
+}
+
 export interface PeopleByName{
   [key: string]: {
     id: string;
@@ -110,7 +117,8 @@ export const getPeopleById = (people) => {
     peopleById[record.id] = {
       id: record.id,
       name: record.fields["Name"],
-      photo: (record.fields["Photo"] || [{thumbnails: {large: {url: NO_PHOTO}}}])[0]
+      photo: (record.fields["Photo"] || [{thumbnails: {large: {url: NO_PHOTO}}}])[0],
+      reports: record.fields["Reports"]
     }
   });
   return peopleById

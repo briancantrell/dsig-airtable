@@ -31,6 +31,7 @@ export const processReports = async () => {
   const processedReportDataIds = []
   const newRideReportIds = []
   let unprocessedReportData = await getUnprocessedRideReportData() 
+  console.log(`found ${unprocessedReportData.length} unprocessed ride reports`)
 
   const participants = await getPeople("Participants")
   const participantByName = getPeopleByName(participants)

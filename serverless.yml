@@ -41,6 +41,12 @@ functions:
       - sns: 
           arn: !Ref RideReportTopic 
           topicName: ride-reports-topic-${self:provider.stage}
+  rosterPreview:
+    handler: src/handlers/roster-preview.handle
+    events:
+      - http:
+          path: /roster-preview
+          method: get
 
 resources:
   Resources:

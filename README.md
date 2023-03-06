@@ -21,6 +21,8 @@ tests will write to the Airtable base specified in AIRTABLE_BASE_ID, currently u
 To run a function locally use 
 `serverless invoke local -f processRideReports`
 
+`serverless invoke local -f rosterPreview --data '{ "queryStringParameters": {"rideId":"P50WXIl6PUlonrSH"}}'`
+
 ## Deploying
 
 There are two serverless framework "stages". dev and production.
