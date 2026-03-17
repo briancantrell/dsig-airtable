@@ -1,4 +1,4 @@
-import * as Airtable from 'airtable'
+import Airtable from 'airtable'
 
 const NO_PHOTO = "https://i.pinimg.com/originals/41/c6/2c/41c62c9bf5899dd4f003c801296d3c07.jpg"
 
