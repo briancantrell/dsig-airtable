@@ -33,7 +33,7 @@ functions:
     handler: src/handlers/ride-reports.handle
     events:
       - schedule:
-          rate: rate(3 minutes)
+          rate: rate(5 minutes)
           enabled: true
   postRideReportToSlack:
     handler: src/handlers/ride-report-slack.handle
