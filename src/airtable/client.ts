@@ -133,9 +133,9 @@ export const getPeople = async (peopleType) => {
   }).eachPage(function page(records, fetchNextPage) {
     records.forEach(function(record) {
       people.push(record)
-      fetchNextPage() 
-    }
-  )})
+    })
+    fetchNextPage()
+  })
 
   return people
 }

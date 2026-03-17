@@ -28,38 +28,41 @@ import { publishRideReportCreated } from "../sns/client"
 // }
 
 export const processReports = async () => {
-  const processedReportDataIds = []
-  const newRideReportIds = []
-  let unprocessedReportData = await getUnprocessedRideReportData() 
-  console.log(`found ${unprocessedReportData.length} unprocessed ride reports`)
+  try {
+    const processedReportDataIds = []
+    const newRideReportIds = []
+    let unprocessedReportData = await getUnprocessedRideReportData()
+    console.log(`found ${unprocessedReportData.length} unprocessed ride reports`)
 
-  const participants = await getPeople("Participants")
-  const participantByName = getPeopleByName(participants)
+    const participants = await getPeople("Participants")
+    const participantByName = getPeopleByName(participants)
 
-  await Promise.all(
-    unprocessedReportData
-      .map(async (reportData) => {
-        const rideReportFields = buildRideReportFields(reportData)
-        const rideReport = await createRideReport(rideReportFields)
-        newRideReportIds.push(rideReport[0].id)
-        processedReportDataIds.push(reportData.id)
-        const participantReportFields = buildParticipantReportFields(
-          reportData, 
-          rideReport[0].id, 
-          participantByName
-        )
-        return createParticipantReport(participantReportFields)
-      })
-  )
+    await Promise.all(
+      unprocessedReportData
+        .map(async (reportData) => {
+          const rideReportFields = buildRideReportFields(reportData)
+          const rideReport = await createRideReport(rideReportFields)
+          newRideReportIds.push(rideReport[0].id)
+          processedReportDataIds.push(reportData.id)
+          const participantReportFields = buildParticipantReportFields(
+            reportData,
+            rideReport[0].id,
+            participantByName
+          )
+          return createParticipantReport(participantReportFields)
+        })
+    )
 
-  if(processedReportDataIds.length > 0) {
-    const markFields = buildMarkRideReportDataProcessedFields(processedReportDataIds)
-    await markRideReportDataProcessed(markFields)
+    if(processedReportDataIds.length > 0) {
+      const markFields = buildMarkRideReportDataProcessedFields(processedReportDataIds)
+      await markRideReportDataProcessed(markFields)
+    }
+
+    await Promise.all(newRideReportIds.map(id => publishRideReportCreated(id)))
+  } catch (err) {
+    console.error("Error processing ride reports:", err)
+    throw err
   }
-
-  newRideReportIds.forEach(id => {
-    publishRideReportCreated(id)
-  })
 }
 
 const buildRideReportFields = (reportData) => {
