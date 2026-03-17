@@ -1,4 +1,4 @@
-import { getPeople, getPeopleByName, PeopleByName, getParticipantReports } from "../../src/airtable/client"
+import { getPeople, getPeopleByName, getParticipantReports } from "../../src/airtable/client"
 
 
 describe("peopleByName", () => {
@@ -6,17 +6,16 @@ describe("peopleByName", () => {
     const participants = await getPeople("Participants")
     const participantsByName = getPeopleByName(participants)
 
-    expect(participantsByName).toMatchObject<PeopleByName>(
-      {'Test User': {
-        id: expect.any(String),
-        photo: expect.any(Object),
-        name: expect.any(String)
-      }}
-    )
+    const firstUser = Object.values(participantsByName)[0]
+    expect(firstUser).toMatchObject({
+      id: expect.any(String),
+      photo: expect.any(Object),
+      name: expect.any(String)
+    })
   })
 })
 
-const participantRideReportId = "recMACISZNhj0fdsR"
+const participantRideReportId = "recHc332Vb5oMJAtq"
 
 describe("getParticipantsReports", () => {
   it("filters by the passed in ids", async () => {

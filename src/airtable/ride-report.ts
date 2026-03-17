@@ -121,7 +121,7 @@ export const getRideReportById = async (id: string)  => {
   const rideReport = await getRideReport(id)
   const leaders = await getPeople("Leaders")
   const rideLeader = getPeopleById(leaders)[rideReport.fields["Leader"][0]]
-  const participantReports = await getParticipantReports(rideReport.fields["Participant Reports"])
+  const participantReports = await getParticipantReports((rideReport.fields["Participant Reports"] as string[]) ?? [])
   const formattedReports = await formatParticipantReports(participantReports)
 
   return {

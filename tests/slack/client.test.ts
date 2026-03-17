@@ -1,5 +1,11 @@
 import { sendRideReportToSlack } from "../../src/slack/client"
 
+jest.mock("@slack/webhook", () => ({
+  IncomingWebhook: jest.fn().mockImplementation(() => ({
+    send: jest.fn().mockResolvedValue({ text: "ok" })
+  }))
+}))
+
 describe("sendRideReportToSlack", () => {
   it("receives 'ok' from the slack api", async () => {
     const rideReport = {

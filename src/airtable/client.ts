@@ -8,8 +8,8 @@ const getBase = () => {
 
 interface rideReportData {
   fields: {
-    Leader: Array<String>;
-    Ride: Array<String>;
+    Leader: string[];
+    Ride: string[];
     Summary: string;
   }
 }
@@ -27,10 +27,11 @@ export const createRideReport = async (rideReportData: rideReportData) => {
 }
 
 export const getParticipantReports = async (ids: string[]) => {
+  if (ids.length === 0) return []
   const base = getBase()
   const formula = `OR( ${ids.map(id => (`{Record Id} = '${id}'`)).join(",")} )`
   return await base("Participant Reports").select({
-   filterByFormula: formula 
+   filterByFormula: formula
   }).all()
 }
 
@@ -59,10 +60,10 @@ export const markRideReportDataProcessed = async (fields: Array<processedRideRep
 
 interface participantReportData {
   fields: {
-    Report: String;
-    'Ride Report': Array<String>;
-    Leader: Array<String>;
-    Participant: Array<String>;
+    Report: string;
+    'Ride Report': string[];
+    Leader: string[];
+    Participant: string[];
   }
 }
 
