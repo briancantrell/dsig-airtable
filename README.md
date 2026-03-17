@@ -26,12 +26,29 @@ To run a function locally use
 ## Deploying
 
 There are two serverless framework "stages". dev and production.
+
+current mac os needs this
+
+`export NODE_OPTIONS=--openssl-legacy-provider && serverless deploy -s production`
+
+not this
+
 `serverless deploy -s production`
 
 ## Logs
 
 To view logs for a stage, 
 `serverless logs -t -s dev -f processRideReports`
+
+## Process of starting a new year
+1. Setup a new Airtable workspace and base and update the base id in AWS Systems Manager
+1. Configure Airtable to allow access to the new base with the existing personal access token https://airtable.com/create/tokens
+3. Setup a slack webhook for the new channel and update it in AWS Systems Manager
+4. Make sure the job schedule is enabled in serverless.yml
+
+## When the SIG ends
+1. Disable the job schedule in serverless.yml
+
 
 ## TODO
 1. ~All tests pass~
